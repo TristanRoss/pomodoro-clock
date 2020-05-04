@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro Clock</title>
+</head>
+<body>
+    <div id="container">
+        <h1>Pomodoro Clock</h1>
+        <p id="clock">25:00</p>
+        <button id="start">Start</button>
+        <button id="pause">Pause</button>
+        <button id="play">Play</button>
+        <button id="reset">Reset</button>
+    </div>
+    <script>
+        function displayClock(min, sec) {
+            clock.textContent = min + ':' +  sec;
+        }
+
+        function countdown() {
+            let countDownInterval = setInterval(() => {
+                if (!isPaused) {
+                    secondsStr = seconds.toString();
+                    minutesStr = minutes.toString();
+                    if (secondsStr.length < 2) {
+                        secondsStr = '0' + secondsStr;
+                    }
+                    if (minutesStr.length < 2) {
+                        minutesStr = '0' + minutesStr;
+                    }
+                    displayClock(minutesStr, secondsStr);
+                    
+                    if (minutes == 0 & seconds == 0) {
+                        breakCountdown();
+                        clearInterval(countDownInterval);
+                        return;
+                    } else {
+                        if (seconds == 0) {
+                            minutes--;
+                            seconds = 60;
+                        }
+                        seconds--;
+
+                    }
+                }
+            }, 1000);
+        }
+
+        function breakCountdown() {
+            let breakInterval = setInterval(() => {
+                if (!isPaused) {
+                    breakSecondsStr = breakSeconds.toString();
+                    breakMinutesStr = breakMinutes.toString();
+                    if (breakSecondsStr.length < 2) {
+                        breakSecondsStr = '0' + breakSecondsStr;
+                    }
+                    if (breakMinutesStr.length < 2) {
+                        breakMinutesStr = '0' + breakMinutesStr;
+                    }
+                    displayClock(breakMinutesStr, breakSecondsStr);
+                    
+                    if (breakMinutes == 0 & breakSeconds == 0) {
+                        minutes = minutesCopy;
+                        seconds = secondsCopy;
+                        countdown();
+                        clearInterval(breakInterval);
+                        return;
+                    } else {
+                        if (breakSeconds == 0) {
+                            breakMinutes--;
+                            breakSeconds = 60;
+                        }
+                        breakSeconds--;
+
+                    }
+                }
+            }, 1000);
+        }
+
+
+        const clock = document.querySelector('#clock');
+        let breakMinutes = 5;
+        let breakSeconds = 0;
+        let minutes = 25;
+        let seconds = 0;
+        let secondsPassed = 0;
+        let isPaused = false;
+        minutesCopy = minutes;
+        secondsCopy = seconds;
+        const start = document.querySelector('#start');
+        start.addEventListener('click', () => {
+            isPaused = false;
+            countdown();
+        });
+        const pause = document.querySelector('#pause');
+        pause.addEventListener('click', () => {
+            isPaused = true;
+        });
+        const play = document.querySelector('#play');
+        play.addEventListener('click', () => {
+            isPaused = false;
+        });
+        const reset = document.querySelector('#reset');
+        reset.addEventListener('click', () => {
+            minutes = 25;
+            seconds = 0;
+            displayClock('25', '00');
+        });
+    </script>
+</body>
+</html>
