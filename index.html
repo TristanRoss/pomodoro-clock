@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/ba0d5dd0c3.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet">
     <title>Pomodoro Clock</title>
 </head>
 <body>
@@ -13,24 +16,35 @@
         <button id="pause">Pause</button>
         <button id="play">Play</button>
         <button id="reset">Reset</button>
+        <h2>Session</h2>
+        <p id="sessionMin">25</p>
+        <button id="sessionUp"><i class="fas fa-caret-up"></i></button>
+        <button id="sessionDown"><i class="fas fa-caret-down"></i></button>
+        <h2>Break</h2>
+        <p id="breakMin">5</p>
+        <button id="breakUp"><i class="fas fa-caret-up"></i></button>
+        <button id="breakDown"><i class="fas fa-caret-down"></i></button>
+        
     </div>
+
     <script>
         function displayClock(min, sec) {
-            clock.textContent = min + ':' +  sec;
+            secondsStr = sec.toString();
+            minutesStr = min.toString();
+            if (secondsStr.length < 2) {
+                secondsStr = '0' + secondsStr;
+            }
+            if (minutesStr.length < 2) {
+                minutesStr = '0' + minutesStr;
+            }
+            clock.textContent = minutesStr + ':' +  secondsStr;
         }
 
         function countdown() {
             let countDownInterval = setInterval(() => {
                 if (!isPaused) {
-                    secondsStr = seconds.toString();
-                    minutesStr = minutes.toString();
-                    if (secondsStr.length < 2) {
-                        secondsStr = '0' + secondsStr;
-                    }
-                    if (minutesStr.length < 2) {
-                        minutesStr = '0' + minutesStr;
-                    }
-                    displayClock(minutesStr, secondsStr);
+                    
+                    displayClock(minutes, seconds);
                     
                     if (minutes == 0 & seconds == 0) {
                         breakCountdown();
@@ -45,7 +59,7 @@
 
                     }
                 }
-            }, 1000);
+            }, 1);
         }
 
         function breakCountdown() {
@@ -64,6 +78,8 @@
                     if (breakMinutes == 0 & breakSeconds == 0) {
                         minutes = minutesCopy;
                         seconds = secondsCopy;
+                        breakMinutesCopy = breakMinutes;
+                        breakSecondsCopy = breakSeconds;
                         countdown();
                         clearInterval(breakInterval);
                         return;
@@ -76,7 +92,7 @@
 
                     }
                 }
-            }, 1000);
+            }, 1);
         }
 
 
@@ -87,27 +103,86 @@
         let seconds = 0;
         let secondsPassed = 0;
         let isPaused = false;
+        let isStarted = false;
         minutesCopy = minutes;
         secondsCopy = seconds;
+        breakMinutesCopy = breakMinutes;
+        breakSecondsCopy = breakSeconds;
         const start = document.querySelector('#start');
         start.addEventListener('click', () => {
             isPaused = false;
+            isStarted = true;
             countdown();
         });
+
         const pause = document.querySelector('#pause');
         pause.addEventListener('click', () => {
             isPaused = true;
         });
+
         const play = document.querySelector('#play');
         play.addEventListener('click', () => {
             isPaused = false;
         });
+
         const reset = document.querySelector('#reset');
         reset.addEventListener('click', () => {
             minutes = 25;
             seconds = 0;
+            breakMinutes = 5;
+            breakSeconds = 0;
+            sessionMin.textContent = minutes;
+            breakMin.textContent = breakMinutes;
             displayClock('25', '00');
+            isPaused = true;
+            isStarted = false;
         });
+
+        const sessionMin = document.querySelector('#sessionMin');
+        const sessionUp = document.querySelector('#sessionUp');
+        sessionUp.addEventListener('click', () => {
+            if (!isStarted) {
+                minutes++;
+                minutesCopy = minutes;
+                displayClock(minutes, seconds);
+                sessionMin.textContent = minutes;
+            }
+        });
+
+        const sessionDown = document.querySelector('#sessionDown');
+        sessionDown.addEventListener('click', () => {
+            if (!isStarted && minutes > 1) {
+                minutes--;
+                minutesCopy = minutes;
+                displayClock(minutes, seconds);
+                sessionMin.textContent = minutes;
+            }
+        });
+
+        const breakMin = document.querySelector('#breakMin');
+        const breakUp = document.querySelector('#breakUp');
+        breakUp.addEventListener('click', () => {
+            if (!isStarted) {
+                breakMinutes++;
+                breakMinutesCopy = breakMinutes;
+                displayClock(minutes, seconds);
+                breakMin.textContent = breakMinutes;
+            }
+        });
+
+        const breakDown = document.querySelector('#breakDown');
+        breakDown.addEventListener('click', () => {
+            if (!isStarted && breakMinutes > 1) {
+                breakMinutes--;
+                breakMinutesCopy = breakMinutes;
+                displayClock(minutes, seconds);
+                breakMin.textContent = breakMinutes;
+            }
+        });
+
+        
+
+
     </script>
 </body>
 </html>
